@@ -109,8 +109,7 @@ static int decrypt_mode(const char *key_filename, const char *c_str)
 	message = decode(decrypt_m, length);
 
 	//don't do \n! it appends 0a to all outputs -_-
-	printf("%s\n", message); // print message
-
+	printf("%s", message); // print message
 	rsa_key_clear(key);
 	mpz_clear(cipher);
 	mpz_clear(decrypt_m);
