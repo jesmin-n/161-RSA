@@ -190,9 +190,11 @@ static void generate_prime(mpz_t p, unsigned int numbits)
 		printf("Going to abort the program: File Error\n");
      	abort();
 	}
+	
+
 	//read numbits/8 bytes from the file handle into the array
 	size_t fread_result;
-	fread_result = fread(array_ptr_numbits, 4, numbits/8, f)
+	fread_result = fread(array_ptr_numbits, numbits/8, 1, f)
 	if (result != numbits/8) {
 		printf("Going to abort the program: Reading Error\n");
      	abort();
@@ -200,8 +202,22 @@ static void generate_prime(mpz_t p, unsigned int numbits)
 	*array_ptr_numbits = *array_ptr_numbits | 0xc0;
 	//IDK IF THIS IS RIGHT
 	mpz_import(p, (numbits/8)/4, 1, 4, 0, 0, array_ptr_numbits);
-	mpz_probab_prime_p();
-
+	int is_prime;
+	is_prime = mpz_probab_prime_p(p, 25);
+	
+	while(is_prime != 2) {
+		//not prime, so try again
+		fread_result = fread(array_ptr_numbits, 4, numbits/8, f)
+		if (result != numbits/8) {
+			printf("Going to abort the program: Reading Error\n");
+	     	abort();
+		}
+		*array_ptr_numbits = *array_ptr_numbits | 0xc0;
+		//IDK IF THIS IS RIGHT
+		mpz_import(p, (numbits/8)/4, 1, 4, 0, 0, array_ptr_numbits);
+		is_prime = mpz_probab_prime_p(p, 25);
+	}
+	//yay we got our prime number
 	free(array_ptr_numbits);
 	fclose(f);
 }
@@ -210,29 +226,5 @@ static void generate_prime(mpz_t p, unsigned int numbits)
  * interval [numbits - 1, numbits). Calls abort if any error occurs. */
 void rsa_genkey(struct rsa_key *key, unsigned int numbits)
 {
-	mpz_t p, q, n, e, d;
-	mpz_init(p);
-	mpz_init(q);
-	mpz_init(n);
-	mpz_init(e);
-	mpz_init(d);
-
-	mpz_set_ui(e, 65537); // set e as 65537, "traditional choice" according to project specs
-	mpz_set(key->e, e);
-
-	generate_prime(p, numbits/2);
-	generate_prime(q, numbits/2);
-	mpz_sub_ui(p, p, 1);
-	mpz_sub_ui(q, q, 1);
-	mpz_mul(n, p, q);
-	mpz_set(key->n, n);
-
-	mpz_invert(d, e, n); // calculate inverse of e mod n
-	mpz_set(key->d, d);
-
-	mpz_clear(p);
-	mpz_clear(q);
-	mpz_clear(n);
-	mpz_clear(e);
-	mpz_clear(d);
+	/* TODO */
 }
