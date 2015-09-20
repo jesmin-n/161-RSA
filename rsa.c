@@ -184,18 +184,26 @@ void rsa_decrypt(mpz_t m, const mpz_t c, const struct rsa_key *key)
  * interval [numbits - 0.5, numbits). Calls abort if any error occurs. */
 static void generate_prime(mpz_t p, unsigned int numbits)
 {
-	//QUESTION: unsigned ints should only be 4 bytes though, needs to be 8
-	/*
-	unsigned int *array_ptr_numbits;
-	array_ptr_numbits = malloc(8);
-	
+	unsigned int *array_ptr_numbits = (unsigned int *)malloc(numbits/8);
 	FILE* f = fopen("/dev/urandom", "r");
 	if (pFile == NULL) {
-		fputs ("File error", stderr);
-		exit (1);
+		printf("Going to abort the program: File Error\n");
+     	abort();
 	}
-	fread
-	*/
+	//read numbits/8 bytes from the file handle into the array
+	size_t fread_result;
+	fread_result = fread(array_ptr_numbits, 4, numbits/8, f)
+	if (result != numbits/8) {
+		printf("Going to abort the program: Reading Error\n");
+     	abort();
+	}
+	*array_ptr_numbits = *array_ptr_numbits | 0xc0;
+	//IDK IF THIS IS RIGHT
+	mpz_import(p, (numbits/8)/4, 1, 4, 0, 0, array_ptr_numbits);
+	mpz_probab_prime_p();
+
+	free(array_ptr_numbits);
+	fclose(f);
 }
 
 /* Generate an RSA key. The base-2 logarithm of the modulus n will lie in the
