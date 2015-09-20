@@ -123,6 +123,7 @@ static int genkey_mode(const char *numbits_str)
 	FILE *fp = fopen("Output", "w");
 	rsa_key_write(fp, key);
 	rsa_key_clear(key);
+	fclose(fp);
 
 	return 0;
 }
