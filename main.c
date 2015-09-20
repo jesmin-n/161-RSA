@@ -77,14 +77,7 @@ static int encrypt_mode(const char *key_filename, const char *message)
 
 /* The "decrypt" subcommand. c_str should be the string representation of an
  * integer ciphertext.
- *
- * 1) Call rsa_key_init to initialize key structure
- * 2) Call rsa_key_load_private to load the key from a file
- * 3) Parse ciphertext string into integer c
- * 4) Call rsa_decrypt and store result in m
- * 5) Convert m to a string and output
- * 6) Call rsa_key_clear to free private key
- *
+
  * The return value is the exit code of the program as a whole: nonzero if there
  * was an error; zero otherwise. */
 static int decrypt_mode(const char *key_filename, const char *c_str)
@@ -124,9 +117,14 @@ static int decrypt_mode(const char *key_filename, const char *c_str)
  * was an error; zero otherwise. */
 static int genkey_mode(const char *numbits_str)
 {
-	/* TODO */
-	fprintf(stderr, "genkey not yet implemented\n");
-	return 1;
+	struct rsa_key *key = (struct rsa_key *)malloc(sizeof(struct rsa_key));
+	rsa_key_init(key); // initialize key structure
+	rsa_genkey(key, *numbits_str);
+	FILE *fp = fopen("Output", "w");
+	rsa_key_write(fp, key);
+	rsa_key_clear(key);
+
+	return 0;
 }
 
 int main(int argc, char *argv[])
