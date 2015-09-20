@@ -186,7 +186,7 @@ static void generate_prime(mpz_t p, unsigned int numbits)
 {
 	unsigned int *array_ptr_numbits = (unsigned int *)malloc(numbits/8);
 	FILE* f = fopen("/dev/urandom", "r");
-	if (pFile == NULL) {
+	if (f == NULL) {
 		printf("Going to abort the program: File Error\n");
      	abort();
 	}
@@ -194,8 +194,8 @@ static void generate_prime(mpz_t p, unsigned int numbits)
 
 	//read numbits/8 bytes from the file handle into the array
 	size_t fread_result;
-	fread_result = fread(array_ptr_numbits, numbits/8, 1, f)
-	if (result != numbits/8) {
+	fread_result = fread(array_ptr_numbits, numbits/8, 1, f);
+	if (fread_result != numbits/8) {
 		printf("Going to abort the program: Reading Error\n");
      	abort();
 	}
@@ -207,8 +207,8 @@ static void generate_prime(mpz_t p, unsigned int numbits)
 	
 	while(is_prime != 2) {
 		//not prime, so try again
-		fread_result = fread(array_ptr_numbits, 4, numbits/8, f)
-		if (result != numbits/8) {
+		fread_result = fread(array_ptr_numbits, 4, numbits/8, f);
+		if (fread_result != numbits/8) {
 			printf("Going to abort the program: Reading Error\n");
 	     	abort();
 		}
