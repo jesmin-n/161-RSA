@@ -57,21 +57,61 @@ static char *decode(const mpz_t x, size_t *len)
  * was an error; zero otherwise. */
 static int encrypt_mode(const char *key_filename, const char *message)
 {
-	/* TODO */
-	fprintf(stderr, "encrypt not yet implemented\n");
-	return 1;
+	struct rsa_key *key;
+	key = (struct rsa_key *)malloc(sizeof(struct rsa_key));
+	rsa_key_init(key); // initialize key structure
+	rsa_key_load_public(key_filename, key); // load private key from file
+	mpz_t m, encrypt_m;
+	mpz_init(m);
+	mpz_init(encrypt_m);
+	encode(m, message); // encode message and store into m
+	rsa_encrypt(encrypt_m, m, key); // encrypt m based on key (from file) and store in encrypt_m
+	gmp_printf("%Zd\n", encrypt_m);
+
+	rsa_key_clear(key);
+	mpz_clear(m);
+	mpz_clear(encrypt_m);
+	
+	return 0;
 }
 
 /* The "decrypt" subcommand. c_str should be the string representation of an
  * integer ciphertext.
  *
+ * 1) Call rsa_key_init to initialize key structure
+ * 2) Call rsa_key_load_private to load the key from a file
+ * 3) Parse ciphertext string into integer c
+ * 4) Call rsa_decrypt and store result in m
+ * 5) Convert m to a string and output
+ * 6) Call rsa_key_clear to free private key
+ *
  * The return value is the exit code of the program as a whole: nonzero if there
  * was an error; zero otherwise. */
 static int decrypt_mode(const char *key_filename, const char *c_str)
 {
-	/* TODO */
-	fprintf(stderr, "decrypt not yet implemented\n");
-	return 1;
+	struct rsa_key *key;
+	key = (struct rsa_key *)malloc(sizeof(struct rsa_key));
+	rsa_key_init(key); // initialize key structure
+	rsa_key_load_private(key_filename, key); // load private key from file
+	mpz_t cipher, decrypt_m;
+	mpz_init(cipher);
+	mpz_init(decrypt_m);
+	mpz_set_str(cipher, c_str, 10); // load cipher text into mpz_t cipher
+	rsa_decrypt(decrypt_m, cipher, key); // decrypt cipher based on key (from file) and store in decrypt_m
+
+	size_t *length;
+	length = (size_t *)malloc(sizeof(size_t));
+	char *message;
+	message = (char *)malloc(sizeof(char));
+	message = decode(decrypt_m, length);
+
+	printf("%s\n", message); // print message
+
+	rsa_key_clear(key);
+	mpz_clear(cipher);
+	mpz_clear(decrypt_m);
+	
+	return 0;
 }
 
 /* The "genkey" subcommand. numbits_str should be the string representation of

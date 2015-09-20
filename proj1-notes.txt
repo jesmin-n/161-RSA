@@ -1,0 +1,2 @@
+1. Use GMP to manage multiplication of large numbers (important for RSA)
+2. Key for encrypt and decrypt is given in args
