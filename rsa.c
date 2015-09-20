@@ -195,14 +195,14 @@ static void generate_prime(mpz_t p, unsigned int numbits)
 	size_t fread_result;
 	int is_prime = 0;
 	
-	while(is_prime != 2) {
+	while(is_prime == 0) {
 		//not prime, so try again
-		fread_result = fread(array_ptr_numbits, 4, numbits/8, f);
-		if (fread_result != numbits/8) {
+		fread_result = fread(array_ptr_numbits, numbits/8, 1, f);
+		if (fread_result != 1) {
 			printf("Going to abort the program: Reading Error\n");
 	     	abort();
 		}
-		*array_ptr_numbits = *array_ptr_numbits | 0xc0;
+		*array_ptr_numbits = *array_ptr_numbits | 0xc0000000;
 		//IDK IF THIS IS RIGHT
 		mpz_import(p, 1, 1, (numbits/8), 0, 0, array_ptr_numbits);
 		is_prime = mpz_probab_prime_p(p, 25);
