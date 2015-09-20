@@ -193,7 +193,7 @@ static void generate_prime(mpz_t p, unsigned int numbits)
 
 	//read numbits/8 bytes from the file handle into the array
 	size_t fread_result;
-	int is_prime;
+	int is_prime = 0;
 	
 	while(is_prime != 2) {
 		//not prime, so try again
@@ -209,7 +209,6 @@ static void generate_prime(mpz_t p, unsigned int numbits)
 	}
 	//yay we got our prime number
 	free(array_ptr_numbits);
-	mpz_clear(p);
 	fclose(f);
 }
 
