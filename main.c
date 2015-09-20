@@ -92,7 +92,10 @@ static int decrypt_mode(const char *key_filename, const char *c_str)
 	struct rsa_key *key;
 	key = (struct rsa_key *)malloc(sizeof(struct rsa_key));
 	rsa_key_init(key); // initialize key structure
-	rsa_key_load_private(key_filename, key); // load private key from file
+	int check = rsa_key_load_private(key_filename, key); // load private key from file
+	if (check < 0) {
+		return 239847; //error!
+	}
 	mpz_t cipher, decrypt_m;
 	mpz_init(cipher);
 	mpz_init(decrypt_m);
