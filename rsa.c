@@ -184,7 +184,18 @@ void rsa_decrypt(mpz_t m, const mpz_t c, const struct rsa_key *key)
  * interval [numbits - 0.5, numbits). Calls abort if any error occurs. */
 static void generate_prime(mpz_t p, unsigned int numbits)
 {
-	/* TODO */
+	//QUESTION: unsigned ints should only be 4 bytes though, needs to be 8
+	/*
+	unsigned int *array_ptr_numbits;
+	array_ptr_numbits = malloc(8);
+	
+	FILE* f = fopen("/dev/urandom", "r");
+	if (pFile == NULL) {
+		fputs ("File error", stderr);
+		exit (1);
+	}
+	fread
+	*/
 }
 
 /* Generate an RSA key. The base-2 logarithm of the modulus n will lie in the
