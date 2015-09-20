@@ -65,7 +65,7 @@ static int encrypt_mode(const char *key_filename, const char *message)
 	mpz_init(m);
 	mpz_init(encrypt_m);
 	encode(m, message); // encode message and store into m
-	rsa_encrypt(encrypt_m, m, key); // encrypt m based on key (from file) and store in ecpt_m
+	rsa_encrypt(encrypt_m, m, key); // encrypt m based on key (from file) and store in encrypt_m
 	gmp_printf("%Zd\n", encrypt_m);
 
 	rsa_key_clear(key);
