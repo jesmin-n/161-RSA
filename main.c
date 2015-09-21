@@ -118,7 +118,7 @@ static int genkey_mode(const char *numbits_str)
 	struct rsa_key *key = (struct rsa_key *)malloc(sizeof(struct rsa_key));
 	rsa_key_init(key); // initialize key structure
 	rsa_genkey(key, atoi(numbits_str));
-	FILE* fp = fopen("Output.priv", "w");
+	FILE* fp = fopen("tmpkey.priv", "w");
 	rsa_key_write(fp, key);
 	rsa_key_clear(key);
 	fclose(fp);
