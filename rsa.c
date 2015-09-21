@@ -184,8 +184,8 @@ void rsa_decrypt(mpz_t m, const mpz_t c, const struct rsa_key *key)
  * interval [numbits - 0.5, numbits). Calls abort if any error occurs. */
 static void generate_prime(mpz_t p, unsigned int numbits)
 {
-	unsigned int *array_ptr_numbits = (unsigned int *)malloc(numbits/8);
-	FILE* f = fopen("/dev/urandom", "r");
+	char* array = (char *)malloc(numbits/8);
+	FILE *f = fopen("/dev/urandom", "r");
 	if (f == NULL) {
 		printf("Going to abort the program: File Error\n");
      	abort();
@@ -197,18 +197,18 @@ static void generate_prime(mpz_t p, unsigned int numbits)
 	
 	while(is_prime == 0) {
 		//not prime, so try again
-		fread_result = fread(array_ptr_numbits, numbits/8, 1, f);
+		fread_result = fread(array, numbits/8, 1, f);
 		if (fread_result != 1) {
 			printf("Going to abort the program: Reading Error\n");
 	     	abort();
 		}
-		*array_ptr_numbits = *array_ptr_numbits | 0xc0000000;
-		//IDK IF THIS IS RIGHT
-		mpz_import(p, 1, 1, (numbits/8), 0, 0, array_ptr_numbits);
+
+		*array = *array | 0xc0 ;
+		mpz_import(p, (numbits/8), 1, 1, 0, 0, array);
 		is_prime = mpz_probab_prime_p(p, 25);
 	}
 	//yay we got our prime number
-	free(array_ptr_numbits);
+	free(array);
 	fclose(f);
 }
 

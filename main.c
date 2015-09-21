@@ -89,17 +89,15 @@ static int decrypt_mode(const char *key_filename, const char *c_str)
 	if (check < 0) {
 		return 239847; //error!
 	}
+
 	mpz_t cipher, decrypt_m;
 	mpz_init(cipher);
 	mpz_init(decrypt_m);
 	mpz_set_str(cipher, c_str, 10); // load cipher text into mpz_t cipher
 	rsa_decrypt(decrypt_m, cipher, key); // decrypt cipher based on key (from file) and store in decrypt_m
 
-	size_t *length;
-	length = (size_t *)malloc(sizeof(size_t));
-	char *message;
-	message = (char *)malloc(sizeof(char));
-	message = decode(decrypt_m, length);
+	size_t *length = (size_t *)malloc(sizeof(size_t));
+	char *message = decode(decrypt_m, length);
 
 	//don't do \n! it appends 0a to all outputs -_-
 	printf("%s", message); // print message
@@ -120,7 +118,7 @@ static int genkey_mode(const char *numbits_str)
 	struct rsa_key *key = (struct rsa_key *)malloc(sizeof(struct rsa_key));
 	rsa_key_init(key); // initialize key structure
 	rsa_genkey(key, atoi(numbits_str));
-	FILE* fp = fopen("tmpkey.priv", "w");
+	FILE* fp = fopen("Output.priv", "w");
 	rsa_key_write(fp, key);
 	rsa_key_clear(key);
 	fclose(fp);
