@@ -120,7 +120,7 @@ static int decrypt_mode(const char *key_filename, const char *c_str)
 static int genkey_mode(const char *numbits_str)
 {
 	if (numbits_str == NULL) {
-		return 1; // error
+		return 1; // error with arguments
 	}
 	struct rsa_key *key = (struct rsa_key *)malloc(sizeof(struct rsa_key));
 	rsa_key_init(key); // initialize key structure
