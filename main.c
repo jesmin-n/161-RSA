@@ -57,20 +57,23 @@ static char *decode(const mpz_t x, size_t *len)
  * was an error; zero otherwise. */
 static int encrypt_mode(const char *key_filename, const char *message)
 {
-	struct rsa_key *key;
-	key = (struct rsa_key *)malloc(sizeof(struct rsa_key));
+	struct rsa_key *key = (struct rsa_key *)malloc(sizeof(struct rsa_key));
 	rsa_key_init(key); // initialize key structure
-	rsa_key_load_public(key_filename, key); // load private key from file
+	if (rsa_key_load_public(key_filename, key) == -1) { // load private key from file
+		return 1; // key error
+	}
 	mpz_t m, encrypt_m;
 	mpz_init(m);
 	mpz_init(encrypt_m);
 	encode(m, message); // encode message and store into m
 	rsa_encrypt(encrypt_m, m, key); // encrypt m based on key (from file) and store in encrypt_m
+
 	gmp_printf("%Zd\n", encrypt_m);
 
 	rsa_key_clear(key);
 	mpz_clear(m);
 	mpz_clear(encrypt_m);
+	free(key);
 	
 	return 0;
 }
@@ -82,12 +85,11 @@ static int encrypt_mode(const char *key_filename, const char *message)
  * was an error; zero otherwise. */
 static int decrypt_mode(const char *key_filename, const char *c_str)
 {
-	struct rsa_key *key;
-	key = (struct rsa_key *)malloc(sizeof(struct rsa_key));
+	struct rsa_key *key = (struct rsa_key *)malloc(sizeof(struct rsa_key));
 	rsa_key_init(key); // initialize key structure
 	int check = rsa_key_load_private(key_filename, key); // load private key from file
-	if (check < 0) {
-		return 239847; //error!
+	if (check == -1) {
+		return 1; // key error
 	}
 
 	mpz_t cipher, decrypt_m;
@@ -99,11 +101,13 @@ static int decrypt_mode(const char *key_filename, const char *c_str)
 	size_t *length = (size_t *)malloc(sizeof(size_t));
 	char *message = decode(decrypt_m, length);
 
-	//don't do \n! it appends 0a to all outputs -_-
-	printf("%s", message); // print message
+	//don't do \n! it appropriatepends 0a to all outputs -_-
+	fprintf(stdout, "%s", message); // print message
+	free(message);
 	rsa_key_clear(key);
 	mpz_clear(cipher);
 	mpz_clear(decrypt_m);
+	free(key);
 	
 	return 0;
 }
@@ -115,6 +119,9 @@ static int decrypt_mode(const char *key_filename, const char *c_str)
  * was an error; zero otherwise. */
 static int genkey_mode(const char *numbits_str)
 {
+	if (numbits_str == NULL) {
+		return 1; // error
+	}
 	struct rsa_key *key = (struct rsa_key *)malloc(sizeof(struct rsa_key));
 	rsa_key_init(key); // initialize key structure
 	rsa_genkey(key, atoi(numbits_str));

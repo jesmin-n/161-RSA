@@ -228,12 +228,12 @@ void rsa_genkey(struct rsa_key *key, unsigned int numbits)
 
 	generate_prime(p, numbits/2);
 	generate_prime(q, numbits/2);
+	mpz_mul(key->n, p, q); // store n
 	mpz_sub_ui(p, p, 1);
 	mpz_sub_ui(q, q, 1);
-	mpz_mul(n, p, q);
-	mpz_set(key->n, n);
+	mpz_mul(n, p, q); // new value of n is now (p-1)(q-1)
 
-	mpz_invert(d, e, n); // calculate inverse of e mod n
+	mpz_invert(d, e, n); // calculate inverse of e mod (p-1)(q-1)
 	mpz_set(key->d, d);
 
 	mpz_clear(p);
