@@ -1,0 +1,31 @@
+=== QUESTION 1 ===
+When you try to encrypt a message longer than n bits, you are not guaranteed that the decryption
+function will give back the same message. When the message size is smaller
+than the modulus, the smallest positive integer given back from the function modulo n is 
+exactly the same message. However, when the message is greater, you're getting something
+equivalent modulo n, but it is actually smaller integer.
+
+From doing some online research, RSA's asymmetric keys are secure to exchange but have limited
+message size, while the alternative, symmetric keys, have unlimited message size but are not
+as secure. 
+
+In practice, cryptosystems handle this problem through a hybrid approach:
+encrypting the message with a symmetric key, then asymmetrically encrypting the key and attaching
+it to the message. That way, the receiver will get both the symmetric key and the message and can
+get the encrypted symmetric key, asymmetrically decrypt it, and then use that key to decrypt
+the rest of the message.
+(Source: http://www.sitepoint.com/encrypt-large-messages-asymmetric-keys-phpseclib/)
+
+=== QUESTION 2 ===
+
+Running something like "./rsa encrypt testkey.pub thisisamessage" multiple times reveals that
+encrypting the same message multiple times still gives the same result. 
+An attacker can take advantage of this by discerning patterns in messages sent. Once an
+attacker knows the encryption of one message, that message will no longer be secure
+anytime the message is used again. This is especially dangerous when there is a
+limited variety of messages that can be sent, because the attacker could be able
+to intercept the message more often, and possible figure out the other encryptions for
+other messages.
+
+For example, if the attacker knew one of the encryptions for either "0" or "1," he/she 
+could easily infer that any other message would be the encryption for the other one.
