@@ -9,7 +9,12 @@ From doing some online research, RSA's asymmetric keys are secure to exchange bu
 message size, while the alternative, symmetric keys, have unlimited message size but are not
 as secure. 
 
-In practice, cryptosystems handle this problem through a hybrid approach:
+As discussed in class, we could split up the message into several chunks, and simply add
+padding to the last chunk if it is not of the right length. We also discussed using a
+cryptographic hash function to hash the message to a shorter, encryptable length and then use RSA
+to encode and send the message.
+
+Another method that is utilized in practice is a hybrid approach:
 encrypting the message with a symmetric key, then asymmetrically encrypting the key and attaching
 it to the message. That way, the receiver will get both the symmetric key and the message and can
 get the encrypted symmetric key, asymmetrically decrypt it, and then use that key to decrypt
@@ -19,12 +24,14 @@ the rest of the message.
 === QUESTION 2 ===
 
 Running something like "./rsa encrypt testkey.pub thisisamessage" multiple times reveals that
-encrypting the same message multiple times still gives the same result. 
-An attacker can take advantage of this by discerning patterns in messages sent. Once an
-attacker knows the encryption of one message, that message will no longer be secure
-anytime the message is used again. This is especially dangerous when there is a
-limited variety of messages that can be sent, because the attacker could be able
-to intercept the message more often, and possible figure out the other encryptions for
+encrypting the same message multiple times still gives the same result, meaning that RSA is 
+deterministic. An attacker can take advantage of this by discerning patterns in messages sent, 
+through known plaintext attacks. Once an attacker knows the encryption of one message as well as 
+the plaintext, they can use the information to attack the crytosystem. Furthermore, that message 
+will no longer be secure anytime the message is used again. The attacker can also use multiple 
+known plaintext messages to gather more information. This is especially dangerous, for example, 
+when there is a limited variety of messages that can be sent, because the attacker could be able
+to intercept the messages, and possibly figure out the other encryptions for
 other messages.
 
 For example, if the attacker knew one of the encryptions for either "0" or "1," he/she 

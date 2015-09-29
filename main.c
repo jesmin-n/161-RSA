@@ -124,7 +124,37 @@ static int genkey_mode(const char *numbits_str)
 	}
 	struct rsa_key *key = (struct rsa_key *)malloc(sizeof(struct rsa_key));
 	rsa_key_init(key); // initialize key structure
-	rsa_genkey(key, atoi(numbits_str));
+
+	char *end;
+	int si;
+	 
+	errno = 0;
+	 
+	const long sl = strtoul(numbits_str, &end, 10);
+	 
+	if (end == numbits_str) {
+	  fprintf(stderr, "%s: not a decimal number\n", numbits_str);
+	}
+	else if ('\0' != *end) {
+		fprintf(stderr, "%s: extra characters at end of input: %s\n", numbits_str, end);
+	}
+	else if (sl > UINT_MAX) {
+	    fprintf(stderr, "%ld greater than INT_MAX\n", sl);
+	    return 1;
+	}
+	else if (sl < 0) { //UINT_MIN IS 0
+	     fprintf(stderr, "%ld less than INT_MIN\n", sl);
+	     return 1;
+	}
+	else {
+	    si = (unsigned int)sl;
+	}
+
+	if (sl == 0 || errno != 0) {
+		return 1;
+	}
+
+	rsa_genkey(key, si);
 	FILE* fp = fopen("tmpkey.priv", "w");
 	rsa_key_write(fp, key);
 	rsa_key_clear(key);
